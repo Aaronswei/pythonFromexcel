@@ -11,11 +11,7 @@ leap_year = [31,29,31,30,31,30,31,31,30,31,30,31]
 
 curpath = os.getcwd()
 
-
-except_file = os.path.join(curpath, "except.txt")
-excpt = open(except_file, 'r')
-
-except_members = excpt.read().split()
+except_members = ['郭健','殷宏杰']
 
 
 def whether_workdays(datetime):
@@ -76,7 +72,7 @@ def set_style(name, height, bold=False):
 
 def readAndWrite_excel(year, month, excel_filename, out_filename):
     workbook = xlrd.open_workbook(excel_filename)
-    outbook = xlwt.Workbook()
+    outbook = xlwt.Workbook(style_compression=2)
     mingxi = outbook.add_sheet('sheet1')
     print(workbook.sheet_names())
 
@@ -90,12 +86,17 @@ def readAndWrite_excel(year, month, excel_filename, out_filename):
         datetime = month + "/"+ str(j-4) + "/" + year
         mingxi.write(j, 1, str(datetime), set_style('Arial',220,True))
 
+    temp_rows = 0
+    if sheet3.nrows >= 50:
+        temp_rows = 50
+    elif sheet3.nrows < 50:
+        temp_rows = sheet3.nrows
     
-    for i in range(3, 50): #sheet3.nrows):
+    for i in range(3, temp_rows):
         name = sheet3.cell(i, 0).value
 
-        #print(i, sheet3.nrows)
         mingxi.write_merge(2, 2, (i-3)*5 + 2, (i-3)*5 + 6, name, set_style('Arial',220,True))
+        
 
         mingxi.write_merge(3, 4, (i-3)*5 + 2, (i-3)*5 + 2, "上班", set_style('Arial',220,True))
         mingxi.write_merge(3, 4, (i-3)*5 + 3, (i-3)*5 + 3, "下班", set_style('Arial',220,True))
@@ -141,11 +142,11 @@ def readAndWrite_excel(year, month, excel_filename, out_filename):
 
 
 if __name__ == '__main__':
- 
+    year = '2018'
+    month = '11'
+    input_file = '苏州安智汽车零部件有限公司_考勤报表_20181101-20181130.xlsx'
+    output_file = '苏州安智11月考勤表_1.csv'
 
-    filename = os.path.join(curpath, "docment.txt")
-    f = open(filename, "r")
-    doclist = f.read().split()
-    excel_filename = os.path.join(curpath, doclist[2])
-    out_filename = os.path.join(curpath, doclist[3])
-    readAndWrite_excel(doclist[0], doclist[1], excel_filename, out_filename)
+    excel_filename = os.path.join(curpath, input_file)
+    out_filename = os.path.join(curpath, output_file)
+    readAndWrite_excel(year, month, excel_filename, out_filename)
